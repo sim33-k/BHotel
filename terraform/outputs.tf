@@ -23,3 +23,8 @@ output "private_db_subnet_ids" {
   description = "List of private database subnet IDs"
   value       = module.network.private_db_subnet_ids
 }
+
+output "nat_gateway_public_ip" {
+  description = "Public IP address of the NAT Gateway"
+  value       = module.network.nat_gateway_public_ip
+}
