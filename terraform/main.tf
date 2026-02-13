@@ -24,6 +24,16 @@ module "security" {
   vpc_id       = module.network.vpc_id
 }
 
+# ============================================
+# ECR Module - Container Registries
+# ============================================
+module "ecr" {
+  source = "./modules/ecr"
+
+  project_name = var.project_name
+  environment  = var.environment
+}
+
 # Future modules:
 # - Security module (Security groups)
 # - ECR module (Container registries)
