@@ -6,7 +6,7 @@ This document outlines the architectural requirements for a 3-tier containerized
 **Application Stack:**
 - **Frontend:** Containerized web application using nginx (port 80), stored in Amazon ECR
 - **Backend:** Node.js Express API (port 3000), containerized and stored in Amazon ECR
-- **Database:** Amazon RDS PostgreSQL/MySQL
+- **Database:** Amazon RDS PostgreSQL
 
 ## Region Selection
 **Primary Region:** `ap-southeast-1` (Singapore)
@@ -97,11 +97,12 @@ This document outlines the architectural requirements for a 3-tier containerized
 #### Tier 3: Data Layer (Private DB Subnets)
 - **Database:**
   - Service: Amazon RDS
-  - Engine: PostgreSQL (or MySQL)
+  - Engine: PostgreSQL 15
   - Instance Class: `db.t3.micro`
   - Storage: 20 GB GP3
   - Automated Backups: 7-day retention
   - Single AZ deployment (can enable Multi-AZ if needed)
+  - Port: 5432
 
 ### 3. Network Connectivity
 
@@ -148,12 +149,12 @@ This document outlines the architectural requirements for a 3-tier containerized
 - **Inbound:**
   - Port 3000 from Frontend ECS Security Group
 - **Outbound:**
-  - Port 5432 (PostgreSQL) or 3306 (MySQL) to RDS Security Group
+  - Port 5432 to RDS Security Group (PostgreSQL)
   - Port 443 to 0.0.0.0/0 (for ECR pulls and external APIs)
 
 #### Database Tier Security Group
 - **Inbound:**
-  - PostgreSQL (5432) or MySQL (3306) from Backend ECS Security Group
+  - Port 5432 from Backend ECS Security Group (PostgreSQL)
 - **Outbound:**
   - None required
 
@@ -334,7 +335,7 @@ AWS Cloud Map Namespace: bhotel.local (private to VPC)
                                    │ 10.0.11.45 (ap-southeast-1a)
                                    │ 10.0.12.67 (ap-southeast-1b)
                                    ↓
-                                   RDS (PostgreSQL/MySQL)
+                                   RDS PostgreSQL (port 5432)
    ```
    
    **Note:** Only ONE ALB is used (internet-facing). Frontend-to-backend uses 
