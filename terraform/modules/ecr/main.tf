@@ -27,11 +27,12 @@ resource "aws_ecr_lifecycle_policy" "frontend" {
     rules = [
       {
         rulePriority = 1
-        description  = "Keep last 10 images"
+        description  = "Delete untagged images after 14 days"
         selection = {
-          tagStatus     = "any"
-          countType     = "imageCountMoreThan"
-          countNumber   = 10
+          tagStatus   = "untagged"
+          countType   = "sinceImagePushed"
+          countUnit   = "days"
+          countNumber = 14
         }
         action = {
           type = "expire"
@@ -39,12 +40,11 @@ resource "aws_ecr_lifecycle_policy" "frontend" {
       },
       {
         rulePriority = 2
-        description  = "Delete untagged images after 14 days"
+        description  = "Keep last 10 images"
         selection = {
-          tagStatus   = "untagged"
-          countType   = "sinceImagePushed"
-          countUnit   = "days"
-          countNumber = 14
+          tagStatus     = "any"
+          countType     = "imageCountMoreThan"
+          countNumber   = 10
         }
         action = {
           type = "expire"
@@ -79,11 +79,12 @@ resource "aws_ecr_lifecycle_policy" "backend" {
     rules = [
       {
         rulePriority = 1
-        description  = "Keep last 10 images"
+        description  = "Delete untagged images after 14 days"
         selection = {
-          tagStatus     = "any"
-          countType     = "imageCountMoreThan"
-          countNumber   = 10
+          tagStatus   = "untagged"
+          countType   = "sinceImagePushed"
+          countUnit   = "days"
+          countNumber = 14
         }
         action = {
           type = "expire"
@@ -91,12 +92,11 @@ resource "aws_ecr_lifecycle_policy" "backend" {
       },
       {
         rulePriority = 2
-        description  = "Delete untagged images after 14 days"
+        description  = "Keep last 10 images"
         selection = {
-          tagStatus   = "untagged"
-          countType   = "sinceImagePushed"
-          countUnit   = "days"
-          countNumber = 14
+          tagStatus     = "any"
+          countType     = "imageCountMoreThan"
+          countNumber   = 10
         }
         action = {
           type = "expire"
