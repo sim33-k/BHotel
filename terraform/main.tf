@@ -34,6 +34,22 @@ module "ecr" {
   environment  = var.environment
 }
 
+# ============================================
+# RDS Module - PostgreSQL Database
+# ============================================
+module "rds" {
+  source = "./modules/rds"
+
+  project_name           = var.project_name
+  environment            = var.environment
+  vpc_id                 = module.network.vpc_id
+  private_db_subnet_ids  = module.network.private_db_subnet_ids
+  db_security_group_id   = module.security.rds_security_group_id
+  db_name                = var.db_name
+  db_username            = var.db_username
+  db_password            = var.db_password
+}
+
 # Future modules:
 # - Security module (Security groups)
 # - ECR module (Container registries)

@@ -64,3 +64,21 @@ output "backend_repository_url" {
   description = "URL of the backend ECR repository"
   value       = module.ecr.backend_repository_url
 }
+
+# ============================================
+# RDS Outputs
+# ============================================
+output "db_endpoint" {
+  description = "RDS PostgreSQL connection endpoint"
+  value       = module.rds.db_endpoint
+}
+
+output "db_address" {
+  description = "RDS PostgreSQL hostname"
+  value       = module.rds.db_address
+}
+
+output "db_secret_arn" {
+  description = "ARN of Secrets Manager secret containing database credentials"
+  value       = module.rds.db_secret_arn
+}
