@@ -13,6 +13,17 @@ module "network" {
   availability_zones = var.availability_zones
 }
 
+# ============================================
+# Security Module - Security Groups
+# ============================================
+module "security" {
+  source = "./modules/security"
+
+  project_name = var.project_name
+  environment  = var.environment
+  vpc_id       = module.network.vpc_id
+}
+
 # Future modules:
 # - Security module (Security groups)
 # - ECR module (Container registries)

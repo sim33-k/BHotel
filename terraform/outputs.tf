@@ -28,3 +28,26 @@ output "nat_gateway_public_ip" {
   description = "Public IP address of the NAT Gateway"
   value       = module.network.nat_gateway_public_ip
 }
+
+# ============================================
+# Security Group Outputs
+# ============================================
+output "alb_security_group_id" {
+  description = "ID of the ALB security group"
+  value       = module.security.alb_security_group_id
+}
+
+output "frontend_ecs_security_group_id" {
+  description = "ID of the frontend ECS security group"
+  value       = module.security.frontend_ecs_security_group_id
+}
+
+output "backend_ecs_security_group_id" {
+  description = "ID of the backend ECS security group"
+  value       = module.security.backend_ecs_security_group_id
+}
+
+output "rds_security_group_id" {
+  description = "ID of the RDS security group"
+  value       = module.security.rds_security_group_id
+}
