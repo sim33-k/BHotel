@@ -6,7 +6,7 @@
 # ============================================
 resource "aws_ecr_repository" "frontend" {
   name                 = "${var.project_name}-${var.environment}-frontend"
-  image_tag_mutability = "MUTABLE"  # Allow overwriting tags like 'latest'
+  image_tag_mutability = "MUTABLE" # Allow overwriting tags like 'latest'
 
   # Scan images for vulnerabilities on push
   image_scanning_configuration {
@@ -42,9 +42,9 @@ resource "aws_ecr_lifecycle_policy" "frontend" {
         rulePriority = 2
         description  = "Keep last 10 images"
         selection = {
-          tagStatus     = "any"
-          countType     = "imageCountMoreThan"
-          countNumber   = 10
+          tagStatus   = "any"
+          countType   = "imageCountMoreThan"
+          countNumber = 10
         }
         action = {
           type = "expire"
@@ -94,9 +94,9 @@ resource "aws_ecr_lifecycle_policy" "backend" {
         rulePriority = 2
         description  = "Keep last 10 images"
         selection = {
-          tagStatus     = "any"
-          countType     = "imageCountMoreThan"
-          countNumber   = 10
+          tagStatus   = "any"
+          countType   = "imageCountMoreThan"
+          countNumber = 10
         }
         action = {
           type = "expire"

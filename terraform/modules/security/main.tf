@@ -22,7 +22,7 @@ resource "aws_security_group_rule" "alb_http_inbound" {
   from_port         = 80
   to_port           = 80
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]  # Internet
+  cidr_blocks       = ["0.0.0.0/0"] # Internet
   security_group_id = aws_security_group.alb.id
   description       = "Allow HTTP from internet"
 }
@@ -33,7 +33,7 @@ resource "aws_security_group_rule" "alb_https_inbound" {
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]  # Internet
+  cidr_blocks       = ["0.0.0.0/0"] # Internet
   security_group_id = aws_security_group.alb.id
   description       = "Allow HTTPS from internet"
 }

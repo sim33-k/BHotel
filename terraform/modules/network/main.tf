@@ -6,8 +6,8 @@
 # ============================================
 resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
-  enable_dns_hostnames = true  # Required for ECS and service discovery
-  enable_dns_support   = true  # Required for DNS resolution
+  enable_dns_hostnames = true # Required for ECS and service discovery
+  enable_dns_support   = true # Required for DNS resolution
 
   tags = {
     Name = "${var.project_name}-${var.environment}-vpc"
@@ -23,9 +23,9 @@ resource "aws_subnet" "public" {
   count = length(var.availability_zones)
 
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = cidrsubnet(var.vpc_cidr, 8, count.index + 1)  # 10.0.1.0/24, 10.0.2.0/24
+  cidr_block              = cidrsubnet(var.vpc_cidr, 8, count.index + 1) # 10.0.1.0/24, 10.0.2.0/24
   availability_zone       = var.availability_zones[count.index]
-  map_public_ip_on_launch = true  # Instances get public IPs automatically
+  map_public_ip_on_launch = true # Instances get public IPs automatically
 
   tags = {
     Name = "${var.project_name}-${var.environment}-public-${var.availability_zones[count.index]}"
@@ -42,7 +42,7 @@ resource "aws_subnet" "private_app" {
   count = length(var.availability_zones)
 
   vpc_id            = aws_vpc.main.id
-  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 11)  # 10.0.11.0/24, 10.0.12.0/24
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 11) # 10.0.11.0/24, 10.0.12.0/24
   availability_zone = var.availability_zones[count.index]
 
   tags = {
@@ -60,7 +60,7 @@ resource "aws_subnet" "private_db" {
   count = length(var.availability_zones)
 
   vpc_id            = aws_vpc.main.id
-  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 21)  # 10.0.21.0/24, 10.0.22.0/24
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 21) # 10.0.21.0/24, 10.0.22.0/24
   availability_zone = var.availability_zones[count.index]
 
   tags = {
@@ -88,7 +88,7 @@ resource "aws_internet_gateway" "main" {
 # NAT Gateway needs a static public IP
 
 resource "aws_eip" "nat" {
-  domain = "vpc"  # Previously called 'vpc = true'
+  domain = "vpc" # Previously called 'vpc = true'
 
   tags = {
     Name = "${var.project_name}-${var.environment}-nat-eip"
@@ -106,7 +106,7 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "main" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public[0].id  # Deploy in first public subnet
+  subnet_id     = aws_subnet.public[0].id # Deploy in first public subnet
 
   tags = {
     Name = "${var.project_name}-${var.environment}-nat"
@@ -125,7 +125,7 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = "0.0.0.0/0"  # All internet traffic
+    cidr_block = "0.0.0.0/0" # All internet traffic
     gateway_id = aws_internet_gateway.main.id
   }
 
@@ -151,7 +151,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block     = "0.0.0.0/0"  # All internet traffic
+    cidr_block     = "0.0.0.0/0" # All internet traffic
     nat_gateway_id = aws_nat_gateway.main.id
   }
 
