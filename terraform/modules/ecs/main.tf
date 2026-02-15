@@ -253,3 +253,115 @@ resource "aws_ecs_task_definition" "backend" {
 # Data Sources
 # ============================================
 data "aws_region" "current" {}
+
+# ============================================
+# Service Discovery (AWS Cloud Map)
+# ============================================
+
+# Private DNS namespace for service discovery
+resource "aws_service_discovery_private_dns_namespace" "main" {
+  name        = "${var.project_name}-${var.environment}.local"
+  description = "Private DNS namespace for ${var.project_name} ${var.environment} services"
+  vpc         = var.vpc_id
+
+  tags = {
+    Name        = "${var.project_name}-${var.environment}-service-discovery"
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
+# Service discovery service for backend
+resource "aws_service_discovery_service" "backend" {
+  name = "backend"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.main.id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+
+    routing_policy = "MULTIVALUE"
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
+  }
+
+  tags = {
+    Name        = "${var.project_name}-${var.environment}-backend-discovery"
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
+# ============================================
+# ECS Services
+# ============================================
+
+# Frontend ECS Service
+resource "aws_ecs_service" "frontend" {
+  name            = "${var.project_name}-${var.environment}-frontend"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.frontend.arn
+  desired_count   = var.frontend_desired_count
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    subnets          = var.private_app_subnet_ids
+    security_groups  = [var.frontend_security_group_id]
+    assign_public_ip = false
+  }
+
+  load_balancer {
+    target_group_arn = var.frontend_target_group_arn
+    container_name   = "frontend"
+    container_port   = var.frontend_port
+  }
+
+  # Wait for ALB to be ready before creating service
+  depends_on = [var.frontend_target_group_arn]
+
+  tags = {
+    Name        = "${var.project_name}-${var.environment}-frontend-service"
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
+# Backend ECS Service
+resource "aws_ecs_service" "backend" {
+  name            = "${var.project_name}-${var.environment}-backend"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.backend.arn
+  desired_count   = var.backend_desired_count
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    subnets          = var.private_app_subnet_ids
+    security_groups  = [var.backend_security_group_id]
+    assign_public_ip = false
+  }
+
+  load_balancer {
+    target_group_arn = var.backend_target_group_arn
+    container_name   = "backend"
+    container_port   = var.backend_port
+  }
+
+  # Service Discovery - Register with Cloud Map
+  service_registries {
+    registry_arn = aws_service_discovery_service.backend.arn
+  }
+
+  # Wait for ALB to be ready before creating service
+  depends_on = [var.backend_target_group_arn]
+
+  tags = {
+    Name        = "${var.project_name}-${var.environment}-backend-service"
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}

@@ -82,3 +82,39 @@ output "db_secret_arn" {
   description = "ARN of Secrets Manager secret containing database credentials"
   value       = module.rds.db_secret_arn
 }
+
+# ============================================
+# ALB Outputs
+# ============================================
+output "alb_dns_name" {
+  description = "DNS name of the Application Load Balancer (use this to access your app)"
+  value       = module.alb.alb_dns_name
+}
+
+output "application_url" {
+  description = "URL to access your application"
+  value       = "http://${module.alb.alb_dns_name}"
+}
+
+# ============================================
+# ECS Outputs
+# ============================================
+output "ecs_cluster_name" {
+  description = "Name of the ECS cluster"
+  value       = module.ecs.cluster_name
+}
+
+output "frontend_service_name" {
+  description = "Name of the frontend ECS service"
+  value       = module.ecs.frontend_service_name
+}
+
+output "backend_service_name" {
+  description = "Name of the backend ECS service"
+  value       = module.ecs.backend_service_name
+}
+
+output "backend_service_url" {
+  description = "Internal URL for backend service (via service discovery)"
+  value       = module.ecs.backend_service_url
+}

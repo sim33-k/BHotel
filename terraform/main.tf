@@ -74,7 +74,17 @@ module "ecs" {
   frontend_repository_url = module.ecr.frontend_repository_url
   backend_repository_url  = module.ecr.backend_repository_url
   db_secret_arn           = module.rds.db_secret_arn
+
+  # Network configuration for ECS services
+  vpc_id                 = module.network.vpc_id
+  private_app_subnet_ids = module.network.private_app_subnet_ids
+
+  # Security groups for ECS tasks
+  frontend_security_group_id = module.security.frontend_ecs_security_group_id
+  backend_security_group_id  = module.security.backend_ecs_security_group_id
+
+  # ALB target groups
+  frontend_target_group_arn = module.alb.frontend_target_group_arn
+  backend_target_group_arn  = module.alb.backend_target_group_arn
 }
 
-# Future modules:
-# - ECS Services module (with service discovery)

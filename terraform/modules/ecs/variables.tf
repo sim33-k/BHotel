@@ -61,3 +61,49 @@ variable "backend_port" {
   type        = number
   default     = 3000
 }
+
+# ============================================
+# ECS Service Variables
+# ============================================
+
+variable "vpc_id" {
+  description = "ID of the VPC"
+  type        = string
+}
+
+variable "private_app_subnet_ids" {
+  description = "List of private app subnet IDs for ECS tasks"
+  type        = list(string)
+}
+
+variable "frontend_security_group_id" {
+  description = "Security group ID for frontend ECS tasks"
+  type        = string
+}
+
+variable "backend_security_group_id" {
+  description = "Security group ID for backend ECS tasks"
+  type        = string
+}
+
+variable "frontend_target_group_arn" {
+  description = "ARN of the frontend target group"
+  type        = string
+}
+
+variable "backend_target_group_arn" {
+  description = "ARN of the backend target group"
+  type        = string
+}
+
+variable "frontend_desired_count" {
+  description = "Desired number of frontend tasks"
+  type        = number
+  default     = 1
+}
+
+variable "backend_desired_count" {
+  description = "Desired number of backend tasks"
+  type        = number
+  default     = 1
+}
