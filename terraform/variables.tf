@@ -41,13 +41,6 @@ variable "db_username" {
   sensitive   = true
 }
 
-variable "db_password" {
-  description = "Master password for RDS"
-  type        = string
-  sensitive   = true
-  # This should be provided via terraform.tfvars or environment variable
-}
-
 variable "db_name" {
   description = "Initial database name"
   type        = string

@@ -2,6 +2,35 @@
 # Creates managed PostgreSQL database in private subnets
 
 # ============================================
+# Random Password Generation
+# ============================================
+# Generate a secure random password for the database
+resource "random_password" "db_password" {
+  length  = 32
+  special = true
+  # Avoid characters that might cause issues in connection strings
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
+# ============================================
+# Secrets Manager - Database Password
+# ============================================
+# Store the database password securely in AWS Secrets Manager
+resource "aws_secretsmanager_secret" "db_password" {
+  name        = "${var.project_name}-${var.environment}-db-password"
+  description = "PostgreSQL master password for ${var.project_name} ${var.environment}"
+
+  tags = {
+    Name = "${var.project_name}-${var.environment}-db-password"
+  }
+}
+
+resource "aws_secretsmanager_secret_version" "db_password" {
+  secret_id     = aws_secretsmanager_secret.db_password.id
+  secret_string = random_password.db_password.result
+}
+
+# ============================================
 # DB Subnet Group
 # ============================================
 # Groups private DB subnets for RDS deployment
@@ -32,7 +61,7 @@ resource "aws_db_instance" "postgres" {
   # Database configuration
   db_name  = var.db_name
   username = var.db_username
-  password = var.db_password
+  password = random_password.db_password.result
   port     = 5432
 
   # Network configuration
@@ -84,11 +113,11 @@ resource "aws_secretsmanager_secret" "db_url" {
 resource "aws_secretsmanager_secret_version" "db_url" {
   secret_id = aws_secretsmanager_secret.db_url.id
   secret_string = jsonencode({
-    url      = "postgresql://${urlencode(var.db_username)}:${urlencode(var.db_password)}@${aws_db_instance.postgres.endpoint}/${var.db_name}"
+    url      = "postgresql://${urlencode(var.db_username)}:${urlencode(random_password.db_password.result)}@${aws_db_instance.postgres.endpoint}/${var.db_name}"
     host     = aws_db_instance.postgres.address
     port     = aws_db_instance.postgres.port
     database = var.db_name
     username = var.db_username
-    password = var.db_password
+    password = random_password.db_password.result
   })
 }

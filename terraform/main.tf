@@ -46,7 +46,6 @@ module "rds" {
   db_security_group_id  = module.security.rds_security_group_id
   db_name               = var.db_name
   db_username           = var.db_username
-  db_password           = var.db_password
 }
 
 # ============================================

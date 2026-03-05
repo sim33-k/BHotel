@@ -11,7 +11,7 @@ availability_zones = ["ap-southeast-1a", "ap-southeast-1b"]
 
 # Database Configuration
 db_username = "postgres"
-db_password = "Simaak#2002"
+# db_password is auto-generated and stored in AWS Secrets Manager
 db_name     = "bhotel"
 
 # ECS Task Configuration

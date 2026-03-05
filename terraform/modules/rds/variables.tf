@@ -35,9 +35,3 @@ variable "db_username" {
   type        = string
   sensitive   = true
 }
-
-variable "db_password" {
-  description = "Master password for the database"
-  type        = string
-  sensitive   = true
-}
