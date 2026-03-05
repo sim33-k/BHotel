@@ -14,10 +14,10 @@ provider "aws" {
 # S3 bucket for terraform state
 resource "aws_s3_bucket" "terraform_state" {
   bucket = "${var.project_name}-terraform-state-${data.aws_caller_identity.current.account_id}"
-
-  lifecycle {
-    prevent_destroy = true
-  }
+  force_destroy = true
+#   lifecycle {
+#     prevent_destroy = true
+#   }
 
   tags = {
     Name        = "${var.project_name}-terraform-state"
@@ -37,6 +37,7 @@ resource "aws_s3_bucket_versioning" "terraform_state" {
 # Enable server-side encryption
 resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state" {
   bucket = aws_s3_bucket.terraform_state.id
+
 
   rule {
     apply_server_side_encryption_by_default {
@@ -66,9 +67,9 @@ resource "aws_dynamodb_table" "terraform_locks" {
     type = "S"
   }
 
-  lifecycle {
-    prevent_destroy = true  # Safety: prevents accidental deletion
-  }
+#   lifecycle {
+#     prevent_destroy = true  # Safety: prevents accidental deletion
+#   }
 
   tags = {
     Name        = "${var.project_name}-terraform-locks"
