@@ -1,21 +1,14 @@
 # RDS Module - PostgreSQL Database
 # Creates managed PostgreSQL database in private subnets
 
-# ============================================
 # Random Password Generation
-# ============================================
-# Generate a secure random password for the database
 resource "random_password" "db_password" {
   length  = 32
   special = true
-  # Avoid characters that might cause issues in connection strings
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
-# ============================================
-# Secrets Manager - Database Password
-# ============================================
-# Store the database password securely in AWS Secrets Manager
+# Secrets Manager (db password)
 resource "aws_secretsmanager_secret" "db_password" {
   name        = "${var.project_name}-${var.environment}-db-password"
   description = "PostgreSQL master password for ${var.project_name} ${var.environment}"
@@ -30,11 +23,8 @@ resource "aws_secretsmanager_secret_version" "db_password" {
   secret_string = random_password.db_password.result
 }
 
-# ============================================
 # DB Subnet Group
-# ============================================
 # Groups private DB subnets for RDS deployment
-
 resource "aws_db_subnet_group" "main" {
   name       = "${var.project_name}-${var.environment}-db-subnet-group"
   subnet_ids = var.private_db_subnet_ids
@@ -44,9 +34,7 @@ resource "aws_db_subnet_group" "main" {
   }
 }
 
-# ============================================
 # RDS PostgreSQL Instance
-# ============================================
 resource "aws_db_instance" "postgres" {
   identifier = "${var.project_name}-${var.environment}-db"
 
@@ -96,9 +84,8 @@ resource "aws_db_instance" "postgres" {
   }
 }
 
-# ============================================
+
 # Secrets Manager - Database Connection String
-# ============================================
 # Stores DATABASE_URL for ECS to inject into backend containers
 
 resource "aws_secretsmanager_secret" "db_url" {

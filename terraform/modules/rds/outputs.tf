@@ -38,6 +38,6 @@ output "db_secret_arn" {
 
 output "database_url" {
   description = "PostgreSQL connection string (sensitive)"
-  value       = "postgresql://${var.db_username}:${var.db_password}@${aws_db_instance.postgres.endpoint}/${var.db_name}"
+  value       = "postgresql://${var.db_username}:${random_password.db_password.result}@${aws_db_instance.postgres.endpoint}/${var.db_name}"
   sensitive   = true
 }
