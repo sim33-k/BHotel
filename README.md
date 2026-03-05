@@ -45,27 +45,31 @@ The infrastructure is deployed across multiple Availability Zones in AWS Singapo
 
 ```
 .
-├── terraform/                  # Terraform infrastructure code
-│   ├── modules/               # Reusable Terraform modules
-│   │   ├── network/          # VPC, subnets, and routing
-│   │   ├── security/         # Security groups and rules
-│   │   ├── ecr/              # Container registry
-│   │   ├── alb/              # Application Load Balancer
-│   │   ├── ecs/              # ECS cluster and services
-│   │   └── rds/              # RDS PostgreSQL database
-│   ├── bootstrap/            # Remote state backend setup
-│   ├── scripts/              # Utility scripts
-│   ├── main.tf               # Root module
-│   ├── variables.tf          # Variable definitions
-│   ├── outputs.tf            # Output values
-│   └── *.tfvars              # Environment-specific variables
-└── docs/                      # Project documentation
-    ├── Architecture.md        # Detailed architecture documentation
-    ├── ECR_PUSH_GUIDE.md     # Container image deployment guide
-    ├── NGINX_ALB_ROUTING.md  # Load balancer routing configuration
-    ├── TERRAFORM_ROADMAP.md  # Infrastructure development roadmap
-    ├── NEXT_STEPS.md         # Implementation next steps
-    └── Future_Ideas.md       # Future enhancements
+├── modules/                   # Reusable Terraform modules
+│   ├── network/              # VPC, subnets, and routing
+│   ├── security/             # Security groups and rules
+│   ├── ecr/                  # Container registry
+│   ├── alb/                  # Application Load Balancer
+│   ├── ecs/                  # ECS cluster and services
+│   └── rds/                  # RDS PostgreSQL database
+├── bootstrap/                # Remote state backend setup
+├── scripts/                  # Utility scripts
+├── docs/                     # Project documentation
+│   ├── Architecture.md       # Detailed architecture documentation
+│   ├── ECR_PUSH_GUIDE.md    # Container image deployment guide
+│   ├── NGINX_ALB_ROUTING.md # Load balancer routing configuration
+│   ├── TERRAFORM_ROADMAP.md # Infrastructure development roadmap
+│   ├── NEXT_STEPS.md        # Implementation next steps
+│   └── Future_Ideas.md      # Future enhancements
+├── main.tf                   # Root module orchestration
+├── variables.tf              # Variable definitions
+├── outputs.tf                # Output values
+├── provider.tf               # AWS provider configuration
+├── backend.tf                # Remote state configuration
+├── terraform.tfvars.example  # Example variable values
+├── terraform.dev.tfvars      # Development environment variables
+├── terraform.qa.tfvars       # QA environment variables
+└── terraform.uat.tfvars      # UAT environment variables
 ```
 
 ## Quick Start
@@ -86,7 +90,7 @@ The infrastructure is deployed across multiple Availability Zones in AWS Singapo
 
 2. **Initialize Terraform backend** (first-time setup)
    ```bash
-   cd terraform/bootstrap
+   cd bootstrap
    terraform init
    terraform apply
    cd ..
@@ -94,7 +98,6 @@ The infrastructure is deployed across multiple Availability Zones in AWS Singapo
 
 3. **Configure environment variables**
    ```bash
-   cd terraform
    cp terraform.tfvars.example terraform.tfvars
    # Edit terraform.tfvars with your configuration
    ```
@@ -186,6 +189,10 @@ Comprehensive documentation is available in the [docs/](docs/) directory:
 - Single NAT Gateway per environment (can be upgraded to HA)
 - RDS instance sizing based on environment (dev uses smaller instances)
 - Lifecycle policies for ECR to remove old images
+
+## Additional Resources
+
+For detailed Terraform usage and module documentation, see [Terraform Usage Guide](docs/TERRAFORM_USAGE.md).
 
 ## Contributing
 
