@@ -49,6 +49,17 @@ resource "aws_security_group_rule" "alb_to_frontend" {
   description              = "Allow traffic to frontend ECS tasks"
 }
 
+# Outbound: Allow traffic to backend containers
+resource "aws_security_group_rule" "alb_to_backend" {
+  type                     = "egress"
+  from_port                = 3000
+  to_port                  = 3000
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.backend_ecs.id
+  security_group_id        = aws_security_group.alb.id
+  description              = "Allow traffic to backend ECS tasks"
+}
+
 # ============================================
 # Frontend ECS Security Group
 # ============================================
@@ -73,17 +84,6 @@ resource "aws_security_group_rule" "frontend_from_alb" {
   source_security_group_id = aws_security_group.alb.id
   security_group_id        = aws_security_group.frontend_ecs.id
   description              = "Allow HTTP from ALB"
-}
-
-# Outbound: Allow port 3000 to backend
-resource "aws_security_group_rule" "frontend_to_backend" {
-  type                     = "egress"
-  from_port                = 3000
-  to_port                  = 3000
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.backend_ecs.id
-  security_group_id        = aws_security_group.frontend_ecs.id
-  description              = "Allow traffic to backend ECS tasks"
 }
 
 # Outbound: Allow HTTPS for ECR image pulls
@@ -112,7 +112,18 @@ resource "aws_security_group" "backend_ecs" {
   }
 }
 
-# Inbound: Allow port 3000 from frontend
+# Inbound: Allow port 3000 from ALB (for direct API routing)
+resource "aws_security_group_rule" "backend_from_alb" {
+  type                     = "ingress"
+  from_port                = 3000
+  to_port                  = 3000
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.alb.id
+  security_group_id        = aws_security_group.backend_ecs.id
+  description              = "Allow traffic from ALB"
+}
+
+# Inbound: Allow port 3000 from frontend (optional, for future use)
 resource "aws_security_group_rule" "backend_from_frontend" {
   type                     = "ingress"
   from_port                = 3000

@@ -99,11 +99,16 @@ variable "backend_target_group_arn" {
 variable "frontend_desired_count" {
   description = "Desired number of frontend tasks"
   type        = number
-  default     = 1
+  default     = 0  # Set to 0 to stop, 1 to start
 }
 
 variable "backend_desired_count" {
   description = "Desired number of backend tasks"
   type        = number
-  default     = 1
+  default     = 0  # Set to 0 to stop, 1 to start
+}
+
+variable "alb_dns_name" {
+  description = "DNS name of the Application Load Balancer"
+  type        = string
 }

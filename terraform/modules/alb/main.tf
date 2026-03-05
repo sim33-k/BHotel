@@ -68,7 +68,7 @@ resource "aws_lb_target_group" "backend" {
     unhealthy_threshold = var.health_check_unhealthy_threshold
     timeout             = var.health_check_timeout
     interval            = var.health_check_interval
-    path                = "/health" # Backend health endpoint
+    path                = "/menu" # Use existing backend endpoint
     protocol            = "HTTP"
     matcher             = "200-299"
   }
@@ -105,7 +105,7 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# Listener Rule - Route /api/* to backend
+# Listener Rule - Route /menu and other backend paths
 resource "aws_lb_listener_rule" "backend_api" {
   listener_arn = aws_lb_listener.http.arn
   priority     = 100
@@ -117,35 +117,12 @@ resource "aws_lb_listener_rule" "backend_api" {
 
   condition {
     path_pattern {
-      values = ["/api/*"]
+      values = ["/menu", "/menu/*", "/orders", "/orders/*"] 
     }
   }
 
   tags = {
     Name        = "${var.project_name}-${var.environment}-backend-rule"
-    Environment = var.environment
-    Project     = var.project_name
-  }
-}
-
-# Optional: Listener Rule - Route /health to backend health endpoint
-resource "aws_lb_listener_rule" "backend_health" {
-  listener_arn = aws_lb_listener.http.arn
-  priority     = 99
-
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.backend.arn
-  }
-
-  condition {
-    path_pattern {
-      values = ["/health"]
-    }
-  }
-
-  tags = {
-    Name        = "${var.project_name}-${var.environment}-health-rule"
     Environment = var.environment
     Project     = var.project_name
   }

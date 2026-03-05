@@ -57,30 +57,6 @@ output "backend_log_group_name" {
 }
 
 # ============================================
-# Service Discovery Outputs
-# ============================================
-
-output "service_discovery_namespace_id" {
-  description = "ID of the service discovery namespace"
-  value       = aws_service_discovery_private_dns_namespace.main.id
-}
-
-output "service_discovery_namespace_name" {
-  description = "Name of the service discovery namespace"
-  value       = aws_service_discovery_private_dns_namespace.main.name
-}
-
-output "backend_service_discovery_arn" {
-  description = "ARN of the backend service discovery service"
-  value       = aws_service_discovery_service.backend.arn
-}
-
-output "backend_service_url" {
-  description = "Internal URL for backend service (via service discovery)"
-  value       = "http://backend.${aws_service_discovery_private_dns_namespace.main.name}:${var.backend_port}"
-}
-
-# ============================================
 # ECS Service Outputs
 # ============================================
 

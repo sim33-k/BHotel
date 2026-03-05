@@ -1,5 +1,4 @@
 # Main Terraform Configuration
-# This is the root module that orchestrates all other modules
 
 # ============================================
 # Network Module - VPC and Subnets
@@ -86,5 +85,8 @@ module "ecs" {
   # ALB target groups
   frontend_target_group_arn = module.alb.frontend_target_group_arn
   backend_target_group_arn  = module.alb.backend_target_group_arn
+
+  # ALB DNS name for CORS configuration
+  alb_dns_name = module.alb.alb_dns_name
 }
 

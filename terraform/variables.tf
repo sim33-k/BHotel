@@ -1,5 +1,5 @@
 # Input Variables
-# Define all the input parameters for our infrastructure
+# Input parameters for our infrastructure
 
 # General Configuration
 variable "project_name" {

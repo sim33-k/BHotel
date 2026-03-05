@@ -211,6 +211,10 @@ resource "aws_ecs_task_definition" "backend" {
         {
           name  = "PORT"
           value = tostring(var.backend_port)
+        },
+        {
+          name  = "ALLOWED_ORIGINS"
+          value = "http://${var.alb_dns_name}"
         }
       ]
 
@@ -253,49 +257,6 @@ resource "aws_ecs_task_definition" "backend" {
 # Data Sources
 # ============================================
 data "aws_region" "current" {}
-
-# ============================================
-# Service Discovery (AWS Cloud Map)
-# ============================================
-
-# Private DNS namespace for service discovery
-resource "aws_service_discovery_private_dns_namespace" "main" {
-  name        = "${var.project_name}-${var.environment}.local"
-  description = "Private DNS namespace for ${var.project_name} ${var.environment} services"
-  vpc         = var.vpc_id
-
-  tags = {
-    Name        = "${var.project_name}-${var.environment}-service-discovery"
-    Environment = var.environment
-    Project     = var.project_name
-  }
-}
-
-# Service discovery service for backend
-resource "aws_service_discovery_service" "backend" {
-  name = "backend"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.main.id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
-
-    routing_policy = "MULTIVALUE"
-  }
-
-  health_check_custom_config {
-    failure_threshold = 1
-  }
-
-  tags = {
-    Name        = "${var.project_name}-${var.environment}-backend-discovery"
-    Environment = var.environment
-    Project     = var.project_name
-  }
-}
 
 # ============================================
 # ECS Services
@@ -349,11 +310,6 @@ resource "aws_ecs_service" "backend" {
     target_group_arn = var.backend_target_group_arn
     container_name   = "backend"
     container_port   = var.backend_port
-  }
-
-  # Service Discovery - Register with Cloud Map
-  service_registries {
-    registry_arn = aws_service_discovery_service.backend.arn
   }
 
   # Wait for ALB to be ready before creating service

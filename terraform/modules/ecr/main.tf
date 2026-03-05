@@ -14,6 +14,11 @@ resource "aws_ecr_repository" "frontend" {
     scan_on_push = true
   }
 
+  # Prevent accidental deletion of ECR with images
+  lifecycle {
+    prevent_destroy = true
+  }
+
   tags = {
     Name = "${var.project_name}-${var.environment}-frontend"
     Tier = "Frontend"
@@ -65,6 +70,11 @@ resource "aws_ecr_repository" "backend" {
 
   image_scanning_configuration {
     scan_on_push = true
+  }
+
+  # Prevent accidental deletion of ECR with images
+  lifecycle {
+    prevent_destroy = true
   }
 
   tags = {

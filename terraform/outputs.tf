@@ -113,8 +113,3 @@ output "backend_service_name" {
   description = "Name of the backend ECS service"
   value       = module.ecs.backend_service_name
 }
-
-output "backend_service_url" {
-  description = "Internal URL for backend service (via service discovery)"
-  value       = module.ecs.backend_service_url
-}

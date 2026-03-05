@@ -57,6 +57,11 @@ resource "aws_db_instance" "postgres" {
   # Deletion protection
   deletion_protection = false # Set to true for production
 
+  # Prevent accidental deletion via Terraform
+  lifecycle {
+    prevent_destroy = true
+  }
+
   tags = {
     Name = "${var.project_name}-${var.environment}-postgres"
   }
@@ -79,7 +84,7 @@ resource "aws_secretsmanager_secret" "db_url" {
 resource "aws_secretsmanager_secret_version" "db_url" {
   secret_id = aws_secretsmanager_secret.db_url.id
   secret_string = jsonencode({
-    url      = "postgresql://${var.db_username}:${var.db_password}@${aws_db_instance.postgres.endpoint}/${var.db_name}"
+    url      = "postgresql://${urlencode(var.db_username)}:${urlencode(var.db_password)}@${aws_db_instance.postgres.endpoint}/${var.db_name}"
     host     = aws_db_instance.postgres.address
     port     = aws_db_instance.postgres.port
     database = var.db_name
